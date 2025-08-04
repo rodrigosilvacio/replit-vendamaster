@@ -16,7 +16,7 @@ export default function Products() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [editingProduct, setEditingProduct] = useState<ProductWithSupplier | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -25,7 +25,7 @@ export default function Products() {
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) params.append("search", search);
-      if (categoryFilter) params.append("category", categoryFilter);
+      if (categoryFilter && categoryFilter !== "all") params.append("category", categoryFilter);
       
       const url = `/api/products?${params.toString()}`;
       const response = await fetch(url);
@@ -139,7 +139,7 @@ export default function Products() {
               <SelectValue placeholder="Todas as categorias" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas as categorias</SelectItem>
+              <SelectItem value="all">Todas as categorias</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category!}>
                   {category}

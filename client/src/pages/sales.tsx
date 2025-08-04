@@ -44,7 +44,7 @@ export default function Sales() {
   const form = useForm<SaleFormData>({
     resolver: zodResolver(saleSchema),
     defaultValues: {
-      customerId: "",
+      customerId: "none",
       items: [],
     },
   });
@@ -54,7 +54,7 @@ export default function Sales() {
       const total = saleItems.reduce((sum, item) => sum + item.subtotal, 0);
       const saleData = {
         sale: {
-          customerId: data.customerId || null,
+          customerId: data.customerId === "none" ? null : data.customerId || null,
           total: total.toString(),
         },
         items: saleItems.map(item => ({
@@ -181,7 +181,7 @@ export default function Sales() {
                     <SelectValue placeholder="Selecione um cliente" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Sem cliente</SelectItem>
+                    <SelectItem value="none">Sem cliente</SelectItem>
                     {customers.map((customer) => (
                       <SelectItem key={customer.id} value={customer.id}>
                         {customer.name}

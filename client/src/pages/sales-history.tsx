@@ -11,8 +11,8 @@ export default function SalesHistory() {
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
-    customerId: "",
-    sellerId: "",
+    customerId: "all",
+    sellerId: "all",
   });
 
   const { data: sales = [], isLoading } = useQuery<SaleWithDetails[]>({
@@ -20,7 +20,7 @@ export default function SalesHistory() {
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) searchParams.append(key, value);
+        if (value && value !== "all") searchParams.append(key, value);
       });
       
       const response = await fetch(`/api/sales?${searchParams}`);
@@ -94,7 +94,7 @@ export default function SalesHistory() {
                 <SelectValue placeholder="Todos os clientes" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os clientes</SelectItem>
+                <SelectItem value="all">Todos os clientes</SelectItem>
                 {customers.map((customer) => (
                   <SelectItem key={customer.id} value={customer.id}>
                     {customer.name}
@@ -110,7 +110,7 @@ export default function SalesHistory() {
                 <SelectValue placeholder="Todos os vendedores" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os vendedores</SelectItem>
+                <SelectItem value="all">Todos os vendedores</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.firstName} {user.lastName}
