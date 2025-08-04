@@ -30,10 +30,10 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
     defaultValues: {
       name: product?.name || "",
       description: product?.description || "",
-      price: product?.price ? parseFloat(product.price.toString()) : 0,
+      price: product?.price ? product.price.toString() : "0",
       stock: product?.stock || 0,
       category: product?.category || "",
-      supplierId: product?.supplierId || "",
+      supplierId: product?.supplierId || "none",
     },
   });
 
@@ -41,8 +41,7 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
     mutationFn: async (data: InsertProduct) => {
       const formattedData = {
         ...data,
-        price: data.price.toString(),
-        supplierId: data.supplierId || null,
+        supplierId: data.supplierId === "none" ? null : data.supplierId || null,
       };
       const url = isEditing ? `/api/products/${product.id}` : "/api/products";
       const method = isEditing ? "PUT" : "POST";
@@ -104,7 +103,7 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
               type="number"
               step="0.01"
               min="0"
-              {...form.register("price", { valueAsNumber: true })}
+              {...form.register("price")}
               className={form.formState.errors.price ? "border-red-500" : ""}
             />
             {form.formState.errors.price && (
@@ -139,14 +138,14 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         <div>
           <Label htmlFor="supplier">Fornecedor</Label>
           <Select
-            value={form.watch("supplierId")}
+            value={form.watch("supplierId") || "none"}
             onValueChange={(value) => form.setValue("supplierId", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione um fornecedor" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Sem fornecedor</SelectItem>
+              <SelectItem value="none">Sem fornecedor</SelectItem>
               {suppliers.map((supplier) => (
                 <SelectItem key={supplier.id} value={supplier.id}>
                   {supplier.name}
