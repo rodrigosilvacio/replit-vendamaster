@@ -320,10 +320,10 @@ export default function Sales() {
               <Button 
                 type="submit" 
                 disabled={createSaleMutation.isPending || saleItems.length === 0}
-                className="bg-success hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-2 text-lg font-semibold"
               >
-                <Check className="w-4 h-4 mr-2" />
-                {createSaleMutation.isPending ? "Processando..." : "Finalizar Venda"}
+                <Check className="w-5 h-5 mr-2" />
+                {createSaleMutation.isPending ? "Gravando..." : "Gravar"}
               </Button>
             </div>
           </form>
