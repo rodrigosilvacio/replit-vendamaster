@@ -186,7 +186,7 @@ export class DatabaseStorage implements IStorage {
 
   // Product operations
   async getProducts(): Promise<ProductWithSupplier[]> {
-    return await db
+    const result = await db
       .select({
         id: products.id,
         name: products.name,
@@ -202,6 +202,7 @@ export class DatabaseStorage implements IStorage {
       .from(products)
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id))
       .orderBy(products.name);
+    return result.map(r => ({ ...r, supplier: r.supplier || undefined }));
   }
 
   async getProduct(id: string): Promise<ProductWithSupplier | undefined> {
@@ -221,7 +222,7 @@ export class DatabaseStorage implements IStorage {
       .from(products)
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id))
       .where(eq(products.id, id));
-    return product;
+    return product ? { ...product, supplier: product.supplier || undefined } : undefined;
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
@@ -248,7 +249,7 @@ export class DatabaseStorage implements IStorage {
       whereClause = and(whereClause, eq(products.category, category)) || whereClause;
     }
 
-    return await db
+    const result = await db
       .select({
         id: products.id,
         name: products.name,
@@ -265,10 +266,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id))
       .where(whereClause)
       .orderBy(products.name);
+    return result.map(r => ({ ...r, supplier: r.supplier || undefined }));
   }
 
   async getLowStockProducts(threshold: number = 10): Promise<ProductWithSupplier[]> {
-    return await db
+    const result = await db
       .select({
         id: products.id,
         name: products.name,
@@ -285,6 +287,7 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(suppliers, eq(products.supplierId, suppliers.id))
       .where(lte(products.stock, threshold))
       .orderBy(products.stock);
+    return result.map(r => ({ ...r, supplier: r.supplier || undefined }));
   }
 
   async updateProductStock(id: string, quantity: number): Promise<void> {
