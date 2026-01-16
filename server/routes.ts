@@ -246,7 +246,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const createSaleSchema = z.object({
-    sale: insertSaleSchema,
+    sale: insertSaleSchema.omit({ sellerId: true }),
     items: z.array(insertSaleItemSchema.omit({ saleId: true })),
   });
 
