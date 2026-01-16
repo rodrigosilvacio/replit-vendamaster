@@ -13,20 +13,18 @@ import { apiRequest } from "@/lib/queryClient";
 import { Plus, Trash2, Check } from "lucide-react";
 import { type ProductWithSupplier, type Customer } from "@shared/schema";
 
-const saleItemSchema = z.object({
-  productId: z.string().min(1, "Produto é obrigatório"),
-  quantity: z.number().min(1, "Quantidade deve ser maior que 0"),
-  unitPrice: z.number().min(0, "Preço deve ser positivo"),
-  subtotal: z.number().min(0, "Subtotal deve ser positivo"),
-});
+type SaleItem = {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+};
 
 const saleSchema = z.object({
   customerId: z.string().optional(),
-  items: z.array(saleItemSchema).min(1, "Adicione pelo menos um produto"),
 });
 
 type SaleFormData = z.infer<typeof saleSchema>;
-type SaleItem = z.infer<typeof saleItemSchema>;
 
 export default function Sales() {
   const { toast } = useToast();
@@ -45,7 +43,6 @@ export default function Sales() {
     resolver: zodResolver(saleSchema),
     defaultValues: {
       customerId: "none",
-      items: [],
     },
   });
 
@@ -154,7 +151,7 @@ export default function Sales() {
       }
     }
 
-    createSaleMutation.mutate({ ...data, items: saleItems });
+    createSaleMutation.mutate(data);
   };
 
   const formatCurrency = (value: number) => {
